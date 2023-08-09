@@ -2,10 +2,18 @@ package bank.account.model;
 
 import java.time.LocalDateTime;
 
-public class Deposit extends AbstractOperation{
+public class Deposit extends AbstractOperation {
 
-	protected Deposit(LocalDateTime date, Statement statement, Money amount) {
+	public Deposit(LocalDateTime date, Statement statement, Money amount) {
 		super(date, statement, amount);
+	}
+
+	public Deposit(Statement statement, Money amount) {
+		this(LocalDateTime.now(), statement, amount);
+	}
+
+	public Deposit(Money amount) {
+		this(null, amount);
 	}
 
 	@Override

@@ -1,5 +1,5 @@
 package bank.account.model;
 
-public record Client() {
+public class Client {
 
 }

@@ -50,7 +50,7 @@ public class Statement {
 		return Collections.unmodifiableList(operations);
 	}
 
-	protected void addOperation(AbstractOperation operation) {
+	public void addOperation(AbstractOperation operation) {
 		if (isPublished())
 			throw new IllegalStateException("no operation can be added to a published statement");
 		operation.setStatement(this);

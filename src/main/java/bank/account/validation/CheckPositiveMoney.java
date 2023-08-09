@@ -11,7 +11,7 @@ public interface CheckPositiveMoney {
 
 	default void checkPositiveMoney(Money amount) {
 		if (!isPositiveMoney(amount))
-			throw new ValidationException("amout must be positive, found : " + amount);
+			throw new ValidationException("amount must be positive, found : " + amount);
 	}
 
 }
