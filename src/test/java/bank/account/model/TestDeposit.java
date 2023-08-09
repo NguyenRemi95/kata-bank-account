@@ -22,7 +22,7 @@ public class TestDeposit {
 	@BeforeEach
 	public void setUp() {
 		this.date = LocalDateTime.now();
-		this.amount = Money.ZERO;
+		this.amount = new Money("100");
 	}
 
 	@Test

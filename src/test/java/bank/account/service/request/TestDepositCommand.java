@@ -9,6 +9,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import bank.account.model.AccountId;
 import bank.account.model.Client;
 import bank.account.model.Money;
+import bank.account.validation.exception.ValidationException;
 
 @ExtendWith(MockitoExtension.class)
 public class TestDepositCommand {
@@ -53,6 +54,20 @@ public class TestDepositCommand {
 	public void testDepositCommand_New_NoAmount() {
 		Assertions.assertThrows(NullPointerException.class, () -> {
 			new DepositCommand(client, accountId, null);
+		});
+	}
+
+	@Test
+	public void testDepositCommand_New_ZeroAmount() {
+		Assertions.assertThrows(ValidationException.class, () -> {
+			new DepositCommand(client, accountId, Money.ZERO);
+		});
+	}
+
+	@Test
+	public void testDepositCommand_New_NegativeAmount() {
+		Assertions.assertThrows(ValidationException.class, () -> {
+			new DepositCommand(client, accountId, new Money("-5.55"));
 		});
 	}
 
