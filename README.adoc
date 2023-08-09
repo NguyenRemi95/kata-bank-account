@@ -1,0 +1,21 @@
+= README.adoc: General information about the bank.account Project
+:author: Nguyen Rémi
+:email:remi.binh.nguyen@gmail.com
+
+:imagesdir: ./images
+:toc:
+:project_id: kata-account
+:icons: font
+:source-highlighter: prettify
+:tags: guides,meta
+
+== Description
+
+This project form the technical contents answer to a Kata exercise.
+You can find the statement of the kata in link:./SG_KATA_DEV.pdf[this pdf document].
+
+The present document aims to provide complementary informations about options retained, various reflection hints etc... anything we like to trace during the project elaboration.
+
+As require in kata statements project use Maven and goal test.
+This is not the first iteration and focus is on the model and statement not integration.
+Project will rely only on plain Java 17 LTS and for the tests junit, and mockito libraries.
