@@ -1,8 +1,15 @@
 package bank.account.model;
 
-public class Account {
+import java.util.Objects;
 
-	private AccountId id;
-	
-	private Client client;
+public record Account(AccountId id, Client client) {
+
+	// possible : Statement currentStatement;
+
+	// possible : List<Statement> statements;
+
+	public Account(AccountId id, Client client) {
+		this.id = Objects.requireNonNull(id);
+		this.client = Objects.requireNonNull(client);
+	}
 }
