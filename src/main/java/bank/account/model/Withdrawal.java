@@ -21,4 +21,14 @@ public class Withdrawal extends AbstractOperation {
 		return OperationType.WITHDRAWAL;
 	}
 
+	// we may need to make calculation without an instance
+	public static Money apply(Money previousBalance, Money amount) {
+		return previousBalance.subtract(amount);
+	}
+
+	@Override
+	public Money computeBalance() {
+		return apply(getPreviousBalance(), getAmount());
+	}
+
 }

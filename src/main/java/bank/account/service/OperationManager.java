@@ -13,8 +13,10 @@ import bank.account.service.request.DepositCommand;
 import bank.account.service.request.WithdrawalCommand;
 import bank.account.validation.CheckClientAccess;
 import bank.account.validation.CheckPositiveMoney;
+import bank.account.validation.CheckWithdrawalBalance;
 
-public class OperationManager implements OperationService, CheckPositiveMoney, CheckClientAccess {
+public class OperationManager
+		implements OperationService, CheckPositiveMoney, CheckClientAccess, CheckWithdrawalBalance {
 
 	private StatementRepository statementRepository;
 
@@ -30,14 +32,16 @@ public class OperationManager implements OperationService, CheckPositiveMoney, C
 		if (statement == null)
 			throw new AccountNotFound("No statement found for accountId " + command.accountId().id());
 		final Money amount = command.amount();
-		{ // validate
-			checkPositiveMoney(amount);
-			checkClientAccess(client, statement.getAccount());
-		}
-		{ // process
-			final Deposit operation = new Deposit(amount);
-			statement.addOperation(operation);
-			statementRepository.store(statement);
+		synchronized (statement) {
+			{ // validate
+				checkPositiveMoney(amount);
+				checkClientAccess(client, statement.getAccount());
+			}
+			{ // process
+				final Deposit operation = new Deposit(amount);
+				statement.addOperation(operation);
+				statementRepository.store(statement);
+			}
 		}
 	}
 
@@ -49,15 +53,18 @@ public class OperationManager implements OperationService, CheckPositiveMoney, C
 		if (statement == null)
 			throw new AccountNotFound("No statement found for accountId " + command.accountId().id());
 		final Money amount = command.amount();
-		{ // validate
-			checkPositiveMoney(amount);
-			checkClientAccess(client, statement.getAccount());
-			// TODO add balanceCheck
-		}
-		{ // process
-			final Withdrawal operation = new Withdrawal(amount);
-			statement.addOperation(operation);
-			statementRepository.store(statement);
+
+		synchronized (statement) {
+			{ // validate
+				checkPositiveMoney(amount);
+				checkClientAccess(client, statement.getAccount());
+				checkBalance(statement, amount);
+			}
+			{ // process
+				final Withdrawal operation = new Withdrawal(amount);
+				statement.addOperation(operation);
+				statementRepository.store(statement);
+			}
 		}
 	}
 

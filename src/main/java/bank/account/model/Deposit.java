@@ -21,4 +21,14 @@ public class Deposit extends AbstractOperation {
 		return OperationType.DEPOSIT;
 	}
 
+	// we may need to make calculation without an instance
+	public static Money apply(Money previousBalance, Money amount) {
+		return previousBalance.add(amount);
+	}
+
+	@Override
+	public Money computeBalance() {
+		return apply(getPreviousBalance(), getAmount());
+	}
+
 }

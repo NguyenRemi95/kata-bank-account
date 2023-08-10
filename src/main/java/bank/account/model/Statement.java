@@ -6,8 +6,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-import bank.account.exception.NotYetImplementedException;
-
 // aka AccountStatement
 // use to paginate Operation History related to an Account
 // - at any given time for each "open" account have a single current Statement ( !isPublished() aka  date == null)
@@ -20,14 +18,25 @@ public class Statement {
 
 	private List<AbstractOperation> operations;
 
-	protected Statement(Account account, LocalDateTime date, List<AbstractOperation> operations) {
+	private Money initialBalance;
+
+	protected Statement(Account account, LocalDateTime date, List<AbstractOperation> operations, Money initialBalance) {
 		this.account = Objects.requireNonNull(account);
 		this.date = date;
 		this.operations = Objects.requireNonNull(operations);
+		this.initialBalance = Objects.requireNonNull(initialBalance);
+	}
+
+	protected Statement(Account account, LocalDateTime date, List<AbstractOperation> operations) {
+		this(account, date, operations, Money.ZERO);
 	}
 
 	public Statement(Account account, LocalDateTime date) {
 		this(account, date, new ArrayList<>());
+	}
+
+	public Statement(Account account, LocalDateTime date, Money initialBalance) {
+		this(account, date, new ArrayList<>(), initialBalance);
 	}
 
 	public Account getAccount() {
@@ -39,18 +48,23 @@ public class Statement {
 	}
 
 	public Money getAmount() {
-		throw new NotYetImplementedException();
+		return getBalance().subtract(initialBalance);
+	}
+
+	public Money getInitialBalance() {
+		return initialBalance;
 	}
 
 	public Money getBalance() {
-		throw new NotYetImplementedException();
+		AbstractOperation operation = getLastOperation();
+		return operation == null ? initialBalance : operation.getBalance();
 	}
 
 	public List<AbstractOperation> getOperations() {
 		return Collections.unmodifiableList(operations);
 	}
 
-	public void addOperation(AbstractOperation operation) {
+	public synchronized void addOperation(AbstractOperation operation) {
 		if (isPublished())
 			throw new IllegalStateException("no operation can be added to a published statement");
 		operation.setStatement(this);
@@ -61,8 +75,12 @@ public class Statement {
 		return date != null;
 	}
 
-	public void publish() {
+	public synchronized void publish() {
 		date = LocalDateTime.now();
+	}
+
+	protected synchronized AbstractOperation getLastOperation() {
+		return operations.size() == 0 ? null : operations.get(operations.size() - 1);
 	}
 
 }
